@@ -1,1 +1,488 @@
-
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccounts_mystorage000001_name": {
+            "defaultValue": "mystorage000001",
+            "type": "String"
+        },
+        "virtualNetworks_myVirtualNetwork_name": {
+            "defaultValue": "myVirtualNetwork",
+            "type": "String"
+        },
+        "virtualMachines_myVirtualMachine1_name": {
+            "defaultValue": "myVirtualMachine1",
+            "type": "String"
+        },
+        "networkInterfaces_myvirtualmachine1423_name": {
+            "defaultValue": "myvirtualmachine1423",
+            "type": "String"
+        },
+        "publicIPAddresses_myVirtualMachine1_ip_name": {
+            "defaultValue": "myVirtualMachine1-ip",
+            "type": "String"
+        },
+        "networkSecurityGroups_myVirtualMachine1_nsg_name": {
+            "defaultValue": "myVirtualMachine1-nsg",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('networkSecurityGroups_myVirtualMachine1_nsg_name')]",
+            "location": "centralus",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "308ad260-4c9d-4480-a333-2b7f9d5c5cd1",
+                "securityRules": [
+                    {
+                        "name": "HTTP",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "SSH",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 320,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "etag": "W/\"95e96b1a-51ab-4ad8-8dda-942280ea7fc1\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('publicIPAddresses_myVirtualMachine1_ip_name')]",
+            "location": "centralus",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "0aa737e4-6ca4-4d5f-a9f4-0f438aa41686",
+                "ipAddress": "40.122.171.180",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('virtualNetworks_myVirtualNetwork_name')]",
+            "location": "centralus",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "854cbc6d-9747-4cb3-aee2-8aded830588b",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "mySubnet",
+                        "etag": "W/\"b6aa0d0d-547b-468e-a1dc-7c9a84c05303\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('storageAccounts_mystorage000001_name')]",
+            "location": "centralus",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('networkSecurityGroups_myVirtualMachine1_nsg_name'), '/HTTP')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_myVirtualMachine1_nsg_name'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 300,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('networkSecurityGroups_myVirtualMachine1_nsg_name'), '/SSH')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_myVirtualMachine1_nsg_name'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 320,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('virtualNetworks_myVirtualNetwork_name'), '/mySubnet')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_myVirtualNetwork_name'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-04-01",
+            "name": "[concat(parameters('storageAccounts_mystorage000001_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_mystorage000001_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-03-01",
+            "name": "[parameters('virtualMachines_myVirtualMachine1_name')]",
+            "location": "centralus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_myvirtualmachine1423_name'))]",
+                "[resourceId('Microsoft.Storage/StorageAccounts', parameters('storageAccounts_mystorage000001_name'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2s_v3"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_myVirtualMachine1_name'), '_disk1_cdda3e38ec5245b4a9192eb100ef93ca')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_myVirtualMachine1_name'), '_disk1_cdda3e38ec5245b4a9192eb100ef93ca'))]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_myVirtualMachine1_name')]",
+                    "adminUsername": "joblimar2",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/joblimar2/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDAw8cNEmApH+pHI7Cxv0chX+IlskI2RfdBR4kfdLDDT0y7Qi2nsRjPQgVZkB2XbsNOj7D6hp0WhzurL86Uo8DkFHnN6KQWZbMx8ThJxJDRYEoXtbVwlHTS18qPKFKyaQZFeT/PFZRuOMK0st17ldkjbNCcp8PPeYlIs6FW8Amvch7JIModRKwX1+nN9lcg0IwbWP0LWS5MCiMrSTidkyJM4A8aoLkwR91TDKl1GGhzZ/XwTIZ1LxnvqYnCdkm8XLgA7/8RFumUA8MvZ5+jHwDI86XqivoBtEKHGikCs8izHP3Aqd3vZtXkqkplSQA13MII947SKhVq8HbvBRWzbtAUkl5RfvErR14zg120DQRgN+Nbgc0LPM9t6hF8JYQ8p712TIbSHwPwME/WoQZ5vGQ5xsVIz61UpJvrNHLoaAddNu+iWgV2CokoG4ATiB1Cj/UTGR5R3GnGoPDXa00ENDXjhshrZuRpE5lR2RtjBjoyrG6Okc5Wf9ud2PEIvGKeRLkYFGU3wQbNVaYkqGknBRD3CdusmbPD0SNLbaD1LJOk4b3HxyiDRoehipTCxDrFhSDNckj1OgA8/UvCvYtE07Ys8JvTN/nuE7EKlfpOUzoCic/no1E39Uq+Y4Vs6rmDk4c0lUYWBLt3HmbC1gk/ZqfciBI5mfagAe9JaqW1lWEM9Q== joblimar2"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_myvirtualmachine1423_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://', parameters('storageAccounts_mystorage000001_name'), '.blob.core.windows.net/')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-04-01",
+            "name": "[concat(parameters('storageAccounts_mystorage000001_name'), '/default/bootdiagnostics-myvirtual-4891c0a7-cb19-488b-9ee3-dfc8f4037618')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_mystorage000001_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_mystorage000001_name'))]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('networkInterfaces_myvirtualmachine1423_name')]",
+            "location": "centralus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_myVirtualMachine1_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_myVirtualNetwork_name'), 'mySubnet')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_myVirtualMachine1_nsg_name'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "da3e1d3d-7616-472c-9b1d-772f8ed1e74c",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "etag": "W/\"7abd6e96-b535-403f-afc4-de82eb8270d0\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_myVirtualMachine1_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_myVirtualNetwork_name'), 'mySubnet')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": [],
+                    "internalDomainNameSuffix": "nw4ezbkhs4zuzlxcrlpnqmcyrd.gx.internal.cloudapp.net"
+                },
+                "macAddress": "00-0D-3A-3F-CA-FE",
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_myVirtualMachine1_nsg_name'))]"
+                },
+                "primary": true,
+                "tapConfigurations": []
+            }
+        }
+    ]
+}
